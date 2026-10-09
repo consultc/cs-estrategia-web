@@ -9,7 +9,7 @@ self.addEventListener('message',event=>{
   if(event.data.type==='lock'){files=null;expires=0;event.ports[0]?.postMessage({ok:true});}
  })());
 });
-const types={html:'text/html; charset=utf-8',js:'application/javascript',mjs:'application/javascript',css:'text/css',py:'text/plain; charset=utf-8',png:'image/png',svg:'image/svg+xml'};
+const types={html:'text/html; charset=utf-8',js:'application/javascript',mjs:'application/javascript',css:'text/css',py:'text/plain; charset=utf-8',png:'image/png',svg:'image/svg+xml',woff:'font/woff',woff2:'font/woff2'};
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);if(url.origin!==base.origin||!url.pathname.startsWith(base.pathname+'_app/'))return;
  event.respondWith((async()=>{
