@@ -16,11 +16,13 @@ async function unlock(password,saved){
  let plain;try{plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(pack.iv)},key,un64(pack.data));}catch{credential=null;throw Error('Senha incorreta.');}
  const bundle=JSON.parse(new TextDecoder().decode(plain));
  bundleFiles=bundle.files;await send({type:'unlock',files:bundleFiles});sessionStorage.setItem('cs-pages-key',JSON.stringify(credential));
- login.hidden=true;workspace.hidden=false;document.title='HUB C&S Estratégia';route();
+ login.hidden=true;workspace.hidden=false;document.title='HUB C&S Estratégia';await route();
 }
 document.getElementById('access').onsubmit=async event=>{event.preventDefault();const button=document.getElementById('enter');button.disabled=true;try{await unlock(document.getElementById('password').value,null);document.getElementById('password').value='';}catch(error){status.textContent=error.message;}finally{button.disabled=false;}};
 document.getElementById('logout').onclick=async()=>{sessionStorage.removeItem('cs-pages-key');credential=null;bundleFiles=null;for(const view of frames.values())view.src='about:blank';await send({type:'lock'});location.replace(base);};
 navigator.serviceWorker.addEventListener('message',event=>{if(event.data?.type==='cs-hydrate'&&bundleFiles&&credential)send({type:'unlock',files:bundleFiles});});
 window.addEventListener('hashchange',()=>{if(credential)route();});
-window.addEventListener('message',event=>{if(event.origin===location.origin&&event.data?.type==='cs-route'&&credential)location.hash=event.data.route;});
+function navigate(name){if(!credential)return;if(location.hash==='#'+name)return route();location.hash=name;}
+for(const link of workspace.querySelectorAll('a[href^="#"]'))link.addEventListener('click',event=>{if(!credential)return;event.preventDefault();navigate(link.hash.slice(1));});
+window.addEventListener('message',event=>{if(event.origin===location.origin&&event.data?.type==='cs-route'&&credential)navigate(event.data.route);});
 const saved=JSON.parse(sessionStorage.getItem('cs-pages-key')||'null');if(saved)unlock('',saved).catch(error=>{sessionStorage.removeItem('cs-pages-key');status.textContent=error.message;});
