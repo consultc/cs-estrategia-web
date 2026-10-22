@@ -2,4 +2,4 @@
 
 Distribuição criptografada para GitHub Pages. O código-fonte permanece no repositório privado. Nenhum documento ou base fiscal de cliente é publicado.
 
-Código da versão de origem: f1a9677
+Código da versão de origem: d4de784
